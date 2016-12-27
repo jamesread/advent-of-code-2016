@@ -21,6 +21,27 @@ def checkChecksum(letterRanks, checksum):
 
     return True
 
+def addAndWrap(original, add, limit):
+    while add > 0:
+        add -= 1
+        original += 1
+
+        if original == limit:
+            original = 0
+    
+    return original 
+
+def translateRoomName(roomName, code):
+    real = ""
+
+    for char in roomName:
+        if char == "-": real += " "; continue
+
+        newChar = addAndWrap(ord(char) - 97, code, 26)
+        real += chr(97 + newChar)
+
+    return real
+
 def assertValid(roomName, checksum):
     ranks = letterRank(roomName.replace("-", ""))
 
@@ -29,7 +50,7 @@ def assertValid(roomName, checksum):
     if not res:
         print ranks
         raise Exception("room not valid " + roomName)
-   
+
 assertValid("aaaaa-bbb-z-y-x", "abxyz")
 
 content = open('input', 'r').read().strip().split("\n");
@@ -45,6 +66,8 @@ for line in content:
 
     if checkChecksum(ranks, m.group('checksum')):
         code = int(m.group('roomCode'))
+
+        print "   " + translateRoomName(m.group('roomName'), code)
 
         total += code
 
